@@ -8,22 +8,16 @@ import { updateResults } from '../store/actions/page-actions';
 function Search(props) {
     const [query, setQuery] = useState("");
     const [loading, setLoading] = useState(false);
-
-    //TODO
-    //1. sort by star value
-    //2. filter by language - add ability to add another search param to url
-
-    let results = props.results;
-    console.log(results);
+    const [sorted, setSorted] = useState(false);
+    let { results } = props;
 
     const handleClick = () => {
-        console.log('button clicked! qry: ' + query);
+        //language q=query+language:lang
         let url = `https://api.github.com/search/repositories?q=${encodeURIComponent(query)}`;
         setLoading(true);
 
         axios.get(url)
             .then(res => {
-                console.log(res);
                 results = res.data.items;
                 setLoading(false);
                 props.UpdateResults(results);
@@ -32,6 +26,15 @@ function Search(props) {
                 console.log(err);
                 setLoading(false);
             })
+    }
+
+    const handleSort = () => {
+        if(sorted) {
+            results.sort((a, b) => a.stargazers_count - b.stargazers_count);
+        } else {
+            results.sort((a, b) => b.stargazers_count - a.stargazers_count);
+        }
+        setSorted(!sorted);
     }
 
     return (
@@ -50,6 +53,12 @@ function Search(props) {
                         onClick={() => handleClick()}>Search</button>
                 </div>
             </div>
+
+            {results.length > 0 ? <div style={{ float: 'right', padding: '5px' }}>
+                <button type="button" class="btn btn-secondary"
+                    onClick={() => handleSort()}>Sort</button>
+            </div> : null }
+            
             {!loading ? <ul class="list-group list-group-flush">
                 {results.map(repository => {
                     return (

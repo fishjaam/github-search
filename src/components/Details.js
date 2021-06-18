@@ -7,10 +7,9 @@ function Details(props) {
     const { results, id } = props;
 
     const selectedResult = results.filter(r => r.id === id).reduce(el => el);
-    console.log(selectedResult);
     const repoDetails = {
         "Name": selectedResult.name,
-        "Description": selectedResult.decription,
+        "Description": selectedResult.description,
         "Owner": selectedResult.owner.login,
         "Number of stars": selectedResult.stargazers_count,
         "Language": selectedResult.language
